@@ -3,7 +3,7 @@ kind: Kustomization
 helmCharts:
 - name: gitlab-runner
   namespace: gitlab
-  valuesFile: values-amd64.yaml
-  releaseName: g4
+  valuesFile: values.yaml
+  releaseName: runner
   version: 0.67.0
   repo: https://charts.gitlab.io
