@@ -1,0 +1,42 @@
+gitlabUrl: <gitlab url>
+concurrent: 10
+checkInterval: 20
+rbac:
+  create: true
+  rules:
+    - apiGroups: [""]
+      resources: ["pods"]
+      verbs: ["list", "get", "watch", "create", "delete"]
+    - apiGroups: [""]
+      resources: ["pods/exec"]
+      verbs: ["create"]
+    - apiGroups: [""]
+      resources: ["pods/log"]
+      verbs: ["get"]
+    - apiGroups: [""]
+      resources: ["pods/attach"]
+      verbs: ["list", "get", "create", "delete", "update"]
+    - apiGroups: [""]
+      resources: ["secrets"]
+      verbs: ["list", "get", "create", "delete", "update"]
+    - apiGroups: [""]
+      resources: ["configmaps"]
+      verbs: ["list", "get", "create", "delete", "update"]
+envVars:
+  - name: FF_USE_LEGACY_KUBERNETES_EXECUTION_STRATEGY
+    value: "true"
+runners:
+  secret: gitlab-runner-secret # need to create manually in the cluster
+  privileged: true
+  tags: "sample-gitlab-runner"
+  config: |
+    [[runners]]
+      [runners.kubernetes]
+        image_pull_secrets = ["<registry secret>"] #registry secret
+        namespace = "gitlab"
+        tls_verify = false
+        image = "docker:24"
+        privileged = true
+        [[runners.kubernetes.volumes.host_path]]
+          name = "docker"
+          mount_path = "/var/run/docker.sock"
